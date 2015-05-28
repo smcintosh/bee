@@ -1,4 +1,4 @@
-# A sample Gemfile
-source "https://rubygems.org"
+source 'https://rubygems.org'
 
-gem 'neo4j-core'
+# Specify your gem's dependencies in bee.gemspec
+gemspec
