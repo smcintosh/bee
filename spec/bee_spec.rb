@@ -5,7 +5,15 @@ describe Bee do
     expect(Bee::VERSION).not_to be nil
   end
 
-  it 'does something useful' do
-    expect(false).to eq(true)
+  it 'can load GDF data' do
+    gdffile = File.expand_path("../data/patchelf.gdf", __FILE__)
+    loader = Bee::GDFLoader.new(gdffile, Bee::Neo4jWriter.new(BEEFILE), Bee::Autotools.new)
+    expect(loader.load).to eq(true)
+  end
+
+  it 'can load GDF XML data' do
+    gdfxmlfile = File.expand_path("../data/patchelf.gdf.xml", __FILE__)
+    loader = Bee::GDFXMLLoader.new(gdfxmlfile, Bee::Neo4jWriter.new(BEEFILE), Bee::Autotools.new)
+    expect(loader.load).to eq(true)
   end
 end

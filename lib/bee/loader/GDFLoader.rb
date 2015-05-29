@@ -1,7 +1,7 @@
 module Bee
   class GDFLoader < Loader
-    def initialize(fname, writer)
-      super(fname, writer)
+    def initialize(fname, writer, config)
+      super(fname, writer, config)
       @zone = :no_zone 
       @types = []
     end
@@ -42,8 +42,10 @@ module Bee
       return val
     end
 
-    def handle_node(row_spl)
-      #puts "NODE: #{row}" if (i % 5000 == 0)
+    def node(row_spl)
+      # Skip uninteresting nodes
+      return if (isJunk(row_spl[0]))
+
       @writer.addNode do |n|
         row_spl.size.times do |i|
           @writer.addProperty(n, @types[i].intern, process_value(@types[i], row_spl[i]))
@@ -59,8 +61,9 @@ module Bee
       end
     end
 
-    def handle_edge(row_spl)
-      # puts "EDGE: #{row}" if (i % 5000 == 0)
+    def edge(row_spl)
+      # Skip uninteresting nodes
+      return if (isJunk(row_spl[0]) or isJunk(row_spl[1]))
 
       # Find the nodes by name
       from = @writer.getNodeByName(row_spl[0])
@@ -85,17 +88,13 @@ module Bee
     end
 
     def handle_row(row)
-      @rownum += 1
-
       @zone = check_zone(row, @zone)
 
       case row
       when /^\s*nodedef>\s/
         @types = row.gsub(/^\s*nodedef>\s/, "").split(",").collect {|x| x.gsub(/\s.*$/, "")}
-        @rownum = 0
       when /^\s*edgedef>\s/
         @types = row.gsub(/^\s*edgedef>\s/, "").split(",").collect {|x| x.gsub(/\s.*$/, "")}
-        @rownum = 0
       else
         # Check that the split length matches the definition length
         row_spl = row.split(",")
@@ -103,16 +102,23 @@ module Bee
           raise "ERROR: Row splits have #{row_spl.size} elements while definition specifies #{@types.size}"
         end
 
-        case zone
+        case @zone
         when :node_zone
-          handle_node(row_spl)
+          node(row_spl)
 
         when :edge_zone
-          handle_edge(row_spl)
+          edge(row_spl)
 
         else
           raise "ERROR: Row '#{row}' in an unrecognized zone of the file"
         end
+      end
+    end
+
+    def load_hook
+      File.foreach(@fname) do |row|
+        row.strip!
+        handle_row(row)
       end
     end
   end

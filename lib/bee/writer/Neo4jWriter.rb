@@ -3,7 +3,8 @@ require 'neo4j-core'
 module Bee
   class Neo4jWriter < Writer
     def initialize(db_path=".beedb")
-      Neo4j::Session.open(:embedded_db, db_path)
+      @session = Neo4j::Session.open(:embedded_db, db_path)
+      @session.start
     end
 
     def addNode
@@ -39,8 +40,8 @@ module Bee
     def getNodeByName(name, add=false)
       nodes = Neo4j::Label.find_nodes(:node, :name, name)
       if (nodes.count != 1)
-        if (add and node.count == 0)
-          addNode do |n|
+        if (add and nodes.count == 0)
+          nodes << addNode do |n|
             addProperty(n, :name, name)
           end
         else
@@ -48,7 +49,12 @@ module Bee
         end
       end
 
-      return nodes.peek
+      return nodes[0]
+    end
+
+    def finished
+      @session.shutdown
+      @session.close
     end
   end
 end

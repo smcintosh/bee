@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<build>
+  <target name="t20__deps_main_Po"></target>
+  <target name="t3_Makefile_am"></target>
+  <target name="t29_all_am"></target>
+  <target name="t6_config_status">
+    <command>$(SHELL) ./config.status --recheck</command>
+    <actual_command>/usr/bin/time /bin/bash -o xtrace ./config.status --recheck</actual_command>
+  </target>
+  <target name="t16_patchelf">
+    <command>@rm -f patchelf$(EXEEXT)</command>
+    <command>$(CXXLINK) $(patchelf_OBJECTS) $(patchelf_LDADD) $(LIBS)</command>
+    <actual_command>@rm -f patchelf</actual_command>
+    <actual_command>g++ $(AM_CXXFLAGS) -g -O2 $(AM_LDFLAGS)  -o patchelf patchelf.o $(LDADD) </actual_command>
+  </target>
+  <target name="t28_all_am"></target>
+  <target name="t12_Makefile_in">
+    <command>@for dep in $?; do \</command>
+    <command>case '$(am__configure_deps)' in \</command>
+    <command>*$$dep*) \</command>
+    <command>( cd $(top_builddir) &amp;&amp; $(MAKE) $(AM_MAKEFLAGS) am--refresh ) \</command>
+    <command>&amp;&amp; { if test -f $@; then exit 0; else break; fi; }; \</command>
+    <command>exit 1;; \</command>
+    <command>esac; \</command>
+    <command>done; \</command>
+    <command>echo ' cd $(top_srcdir) &amp;&amp; $(AUTOMAKE) --foreign src/Makefile'; \</command>
+    <command>$(am__cd) $(top_srcdir) &amp;&amp; \</command>
+    <command>$(AUTOMAKE) --foreign src/Makefile</command>
+    <actual_command>@for dep in $?; do \</actual_command>
+    <actual_command>case '../configure.ac $(CONFIGURE_DEPENDENCIES) ../aclocal.m4' in \</actual_command>
+    <actual_command>*$$dep*) \</actual_command>
+    <actual_command>( cd .. &amp;&amp; make -w --debug=v --debug=m -p SHELL:=/usr/bin/time\ /bin/bash\ -o\ xtrace $(AM_MAKEFLAGS) am--refresh ) \</actual_command>
+    <actual_command>&amp;&amp; { if test -f $@; then exit 0; else break; fi; }; \</actual_command>
+    <actual_command>exit 1;; \</actual_command>
+    <actual_command>esac; \</actual_command>
+    <actual_command>done; \</actual_command>
+    <actual_command>echo ' cd .. &amp;&amp; /usr/bin/time /bin/bash -o xtrace /home/shane/src/patchelf-0.8/build-aux/missing --run automake-1.12 --foreign src/Makefile'; \</actual_command>
+    <actual_command>CDPATH="$${ZSH_VERSION+.}:" &amp;&amp; cd .. &amp;&amp; \</actual_command>
+    <actual_command>/usr/bin/time /bin/bash -o xtrace /home/shane/src/patchelf-0.8/build-aux/missing --run automake-1.12 --foreign src/Makefile</actual_command>
+  </target>
+  <target name="t11_Makefile">
+    <command>@case '$?' in \</command>
+    <command>*config.status*) \</command>
+    <command>cd $(top_builddir) &amp;&amp; $(MAKE) $(AM_MAKEFLAGS) am--refresh;; \</command>
+    <command>*) \</command>
+    <command>echo ' cd $(top_builddir) &amp;&amp; $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)'; \</command>
+    <command>cd $(top_builddir) &amp;&amp; $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe);; \</command>
+    <command>esac;</command>
+    <actual_command>@case '$?' in \</actual_command>
+    <actual_command>*config.status*) \</actual_command>
+    <actual_command>cd .. &amp;&amp; make -w --debug=v --debug=m -p SHELL:=/usr/bin/time\ /bin/bash\ -o\ xtrace $(AM_MAKEFLAGS) am--refresh;; \</actual_command>
+    <actual_command>*) \</actual_command>
+    <actual_command>echo ' cd .. &amp;&amp; /usr/bin/time /bin/bash -o xtrace ./config.status src/$@ depfiles'; \</actual_command>
+    <actual_command>cd .. &amp;&amp; /usr/bin/time /bin/bash -o xtrace ./config.status src/$@ depfiles;; \</actual_command>
+    <actual_command>esac;</actual_command>
+  </target>
+  <target name="t24_Makefile">
+    <command>@case '$?' in \</command>
+    <command>*config.status*) \</command>
+    <command>cd $(top_builddir) &amp;&amp; $(MAKE) $(AM_MAKEFLAGS) am--refresh;; \</command>
+    <command>*) \</command>
+    <command>echo ' cd $(top_builddir) &amp;&amp; $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)'; \</command>
+    <command>cd $(top_builddir) &amp;&amp; $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe);; \</command>
+    <command>esac;</command>
+    <actual_command>@case '$?' in \</actual_command>
+    <actual_command>*config.status*) \</actual_command>
+    <actual_command>cd .. &amp;&amp; make -w --debug=v --debug=m -p SHELL:=/usr/bin/time\ /bin/bash\ -o\ xtrace $(AM_MAKEFLAGS) am--refresh;; \</actual_command>
+    <actual_command>*) \</actual_command>
+    <actual_command>echo ' cd .. &amp;&amp; /usr/bin/time /bin/bash -o xtrace ./config.status tests/$@ depfiles'; \</actual_command>
+    <actual_command>cd .. &amp;&amp; /usr/bin/time /bin/bash -o xtrace ./config.status tests/$@ depfiles;; \</actual_command>
+    <actual_command>esac;</actual_command>
+  </target>
+  <target name="t18_patchelf_cc"></target>
+  <target name="t30_patchelf_1"></target>
+  <target name="t19__deps_simple_simple_Po"></target>
+  <target name="t1_Makefile">
+    <command>@case '$?' in \</command>
+    <command>*config.status*) \</command>
+    <command>echo ' $(SHELL) ./config.status'; \</command>
+    <command>$(SHELL) ./config.status;; \</command>
+    <command>*) \</command>
+    <command>echo ' cd $(top_builddir) &amp;&amp; $(SHELL) ./config.status $@ $(am__depfiles_maybe)'; \</command>
+    <command>cd $(top_builddir) &amp;&amp; $(SHELL) ./config.status $@ $(am__depfiles_maybe);; \</command>
+    <command>esac;</command>
+    <actual_command>@case '$?' in \</actual_command>
+    <actual_command>*config.status*) \</actual_command>
+    <actual_command>echo ' /usr/bin/time /bin/bash -o xtrace ./config.status'; \</actual_command>
+    <actual_command>/usr/bin/time /bin/bash -o xtrace ./config.status;; \</actual_command>
+    <actual_command>*) \</actual_command>
+    <actual_command>echo ' cd . &amp;&amp; /usr/bin/time /bin/bash -o xtrace ./config.status $@ $(am__depfiles_maybe)'; \</actual_command>
+    <actual_command>cd . &amp;&amp; /usr/bin/time /bin/bash -o xtrace ./config.status $@ $(am__depfiles_maybe);; \</actual_command>
+    <actual_command>esac;</actual_command>
+  </target>
+  <target name="t2_Makefile_in">
+    <command>@for dep in $?; do \</command>
+    <command>case '$(am__configure_deps)' in \</command>
+    <command>*$$dep*) \</command>
+    <command>echo ' cd $(srcdir) &amp;&amp; $(AUTOMAKE) --foreign'; \</command>
+    <command>$(am__cd) $(srcdir) &amp;&amp; $(AUTOMAKE) --foreign \</command>
+    <command>&amp;&amp; exit 0; \</command>
+    <command>exit 1;; \</command>
+    <command>esac; \</command>
+    <command>done; \</command>
+    <command>echo ' cd $(top_srcdir) &amp;&amp; $(AUTOMAKE) --foreign Makefile'; \</command>
+    <command>$(am__cd) $(top_srcdir) &amp;&amp; \</command>
+    <command>$(AUTOMAKE) --foreign Makefile</command>
+    <actual_command>@for dep in $?; do \</actual_command>
+    <actual_command>case './configure.ac $(CONFIGURE_DEPENDENCIES) ./aclocal.m4' in \</actual_command>
+    <actual_command>*$$dep*) \</actual_command>
+    <actual_command>echo ' cd . &amp;&amp; /usr/bin/time /bin/bash -o xtrace /home/shane/src/patchelf-0.8/build-aux/missing --run automake-1.12 --foreign'; \</actual_command>
+    <actual_command>CDPATH="$${ZSH_VERSION+.}:" &amp;&amp; cd . &amp;&amp; /usr/bin/time /bin/bash -o xtrace /home/shane/src/patchelf-0.8/build-aux/missing --run automake-1.12 --foreign \</actual_command>
+    <actual_command>&amp;&amp; exit 0; \</actual_command>
+    <actual_command>exit 1;; \</actual_command>
+    <actual_command>esac; \</actual_command>
+    <actual_command>done; \</actual_command>
+    <actual_command>echo ' cd . &amp;&amp; /usr/bin/time /bin/bash -o xtrace /home/shane/src/patchelf-0.8/build-aux/missing --run automake-1.12 --foreign Makefile'; \</actual_command>
+    <actual_command>CDPATH="$${ZSH_VERSION+.}:" &amp;&amp; cd . &amp;&amp; \</actual_command>
+    <actual_command>/usr/bin/time /bin/bash -o xtrace /home/shane/src/patchelf-0.8/build-aux/missing --run automake-1.12 --foreign Makefile</actual_command>
+  </target>
+  <target name="t14_all"></target>
+  <target name="t17_patchelf_o">
+    <command>$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $&lt;</command>
+    <command>$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po</command>
+    <actual_command>g++ -DPACKAGE_NAME=\"patchelf\" -DPACKAGE_TARNAME=\"patchelf\" -DPACKAGE_VERSION=\"0.8\" -DPACKAGE_STRING=\"patchelf\ 0.8\" -DPACKAGE_BUGREPORT=\"\" -DPACKAGE_URL=\"\" -DPACKAGE=\"patchelf\" -DVERSION=\"0.8\" -I. $(INCLUDES) $(AM_CPPFLAGS)  $(AM_CXXFLAGS) -g -O2 -MT patchelf.o -MD -MP -MF .deps/$*.Tpo -c -o patchelf.o patchelf.cc</actual_command>
+    <actual_command>mv -f .deps/$*.Tpo .deps/$*.Po</actual_command>
+    <macro>PACKAGE="patchelf"</macro>
+    <macro>PACKAGE_BUGREPORT=""</macro>
+    <macro>PACKAGE_TARNAME="patchelf"</macro>
+    <macro>PACKAGE_URL=""</macro>
+    <macro>VERSION="0.8"</macro>
+    <macro>PACKAGE_VERSION="0.8"</macro>
+    <macro>PACKAGE_STRING="patchelf</macro>
+    <macro>PACKAGE_NAME="patchelf"</macro>
+  </target>
+  <target name="t21__deps_foo_Po"></target>
+  <target name="t13_Makefile_am"></target>
+  <target name="all"></target>
+  <target name="t15_all_am"></target>
+  <target name="t7_configure">
+    <command>$(am__cd) $(srcdir) &amp;&amp; $(AUTOCONF)</command>
+    <actual_command>CDPATH="$${ZSH_VERSION+.}:" &amp;&amp; cd . &amp;&amp; /usr/bin/time /bin/bash -o xtrace /home/shane/src/patchelf-0.8/build-aux/missing --run autoconf</actual_command>
+  </target>
+  <target name="t4_configure_ac"></target>
+  <target name="t5_aclocal_m4">
+    <command>$(am__cd) $(srcdir) &amp;&amp; $(ACLOCAL) $(ACLOCAL_AMFLAGS)</command>
+    <actual_command>CDPATH="$${ZSH_VERSION+.}:" &amp;&amp; cd . &amp;&amp; /usr/bin/time /bin/bash -o xtrace /home/shane/src/patchelf-0.8/build-aux/missing --run aclocal-1.12 $(ACLOCAL_AMFLAGS)</actual_command>
+  </target>
+  <target name="t9_all_recursive">
+    <command>@fail= failcom='exit 1'; \</command>
+    <command>for f in x $$MAKEFLAGS; do \</command>
+    <command>case $$f in \</command>
+    <command>*=* | --[!k]*);; \</command>
+    <command>*k*) failcom='fail=yes';; \</command>
+    <command>esac; \</command>
+    <command>done; \</command>
+    <command>dot_seen=no; \</command>
+    <command>target=`echo $@ | sed s/-recursive//`; \</command>
+    <command>case "$@" in \</command>
+    <command>distclean-* | maintainer-clean-*) list='$(DIST_SUBDIRS)' ;; \</command>
+    <command>*) list='$(SUBDIRS)' ;; \</command>
+    <command>esac; \</command>
+    <command>for subdir in $$list; do \</command>
+    <command>echo "Making $$target in $$subdir"; \</command>
+    <command>if test "$$subdir" = "."; then \</command>
+    <command>dot_seen=yes; \</command>
+    <command>local_target="$$target-am"; \</command>
+    <command>else \</command>
+    <command>local_target="$$target"; \</command>
+    <command>fi; \</command>
+    <command>($(am__cd) $$subdir &amp;&amp; $(MAKE) $(AM_MAKEFLAGS) $$local_target) \</command>
+    <command>|| eval $$failcom; \</command>
+    <command>done; \</command>
+    <command>if test "$$dot_seen" = "no"; then \</command>
+    <command>$(MAKE) $(AM_MAKEFLAGS) "$$target-am" || exit 1; \</command>
+    <command>fi; test -z "$$fail"</command>
+    <actual_command>@fail= failcom='exit 1'; \</actual_command>
+    <actual_command>for f in x $wp --debug=v - --debug=m -- MAKE=make\ -w\ --debug=v\ --debug=m\ -p\ SHELL:=/usr/bin/time\\\ /bin/bash\\\ -o\\\ xtrace CONFIG_SHELL:=/usr/bin/time\ /bin/bash\ -o\ xtrace SHELL:=/usr/bin/time\ /bin/bash\ -o\ xtrace; do \</actual_command>
+    <actual_command>case $$f in \</actual_command>
+    <actual_command>*=* | --[!k]*);; \</actual_command>
+    <actual_command>*k*) failcom='fail=yes';; \</actual_command>
+    <actual_command>esac; \</actual_command>
+    <actual_command>done; \</actual_command>
+    <actual_command>dot_seen=no; \</actual_command>
+    <actual_command>target=`echo all-recursive | sed s/-recursive//`; \</actual_command>
+    <actual_command>case "all-recursive" in \</actual_command>
+    <actual_command>distclean-* | maintainer-clean-*) list='src tests' ;; \</actual_command>
+    <actual_command>*) list='src tests' ;; \</actual_command>
+    <actual_command>esac; \</actual_command>
+    <actual_command>for subdir in $$list; do \</actual_command>
+    <actual_command>echo "Making $$target in $."; \</actual_command>
+    <actual_command>if test "$." = "."; then \</actual_command>
+    <actual_command>dot_seen=yes; \</actual_command>
+    <actual_command>local_target="$$target-am"; \</actual_command>
+    <actual_command>else \</actual_command>
+    <actual_command>local_target="$$target"; \</actual_command>
+    <actual_command>fi; \</actual_command>
+    <actual_command>(CDPATH="$${ZSH_VERSION+.}:" &amp;&amp; cd $. &amp;&amp; make -w --debug=v --debug=m -p SHELL:=/usr/bin/time\ /bin/bash\ -o\ xtrace $(AM_MAKEFLAGS) $$local_target) \</actual_command>
+    <actual_command>|| eval $$failcom; \</actual_command>
+    <actual_command>done; \</actual_command>
+    <actual_command>if test "$$dot_seen" = "no"; then \</actual_command>
+    <actual_command>make -w --debug=v --debug=m -p SHELL:=/usr/bin/time\ /bin/bash\ -o\ xtrace $(AM_MAKEFLAGS) "$$target-am" || exit 1; \</actual_command>
+    <actual_command>fi; test -z "$$fail"</actual_command>
+  </target>
+  <target name="t25_Makefile_in">
+    <command>@for dep in $?; do \</command>
+    <command>case '$(am__configure_deps)' in \</command>
+    <command>*$$dep*) \</command>
+    <command>( cd $(top_builddir) &amp;&amp; $(MAKE) $(AM_MAKEFLAGS) am--refresh ) \</command>
+    <command>&amp;&amp; { if test -f $@; then exit 0; else break; fi; }; \</command>
+    <command>exit 1;; \</command>
+    <command>esac; \</command>
+    <command>done; \</command>
+    <command>echo ' cd $(top_srcdir) &amp;&amp; $(AUTOMAKE) --foreign tests/Makefile'; \</command>
+    <command>$(am__cd) $(top_srcdir) &amp;&amp; \</command>
+    <command>$(AUTOMAKE) --foreign tests/Makefile</command>
+    <actual_command>@for dep in $?; do \</actual_command>
+    <actual_command>case '../configure.ac $(CONFIGURE_DEPENDENCIES) ../aclocal.m4' in \</actual_command>
+    <actual_command>*$$dep*) \</actual_command>
+    <actual_command>( cd .. &amp;&amp; make -w --debug=v --debug=m -p SHELL:=/usr/bin/time\ /bin/bash\ -o\ xtrace $(AM_MAKEFLAGS) am--refresh ) \</actual_command>
+    <actual_command>&amp;&amp; { if test -f $@; then exit 0; else break; fi; }; \</actual_command>
+    <actual_command>exit 1;; \</actual_command>
+    <actual_command>esac; \</actual_command>
+    <actual_command>done; \</actual_command>
+    <actual_command>echo ' cd .. &amp;&amp; /usr/bin/time /bin/bash -o xtrace /home/shane/src/patchelf-0.8/build-aux/missing --run automake-1.12 --foreign tests/Makefile'; \</actual_command>
+    <actual_command>CDPATH="$${ZSH_VERSION+.}:" &amp;&amp; cd .. &amp;&amp; \</actual_command>
+    <actual_command>/usr/bin/time /bin/bash -o xtrace /home/shane/src/patchelf-0.8/build-aux/missing --run automake-1.12 --foreign tests/Makefile</actual_command>
+  </target>
+  <target name="t10__deps_patchelf_Po"></target>
+  <target name="t26_Makefile_am"></target>
+  <target name="t31_README"></target>
+  <target name="t22__deps_big_dynstr_Po"></target>
+  <target name="t23__deps_bar_Po"></target>
+  <target name="t27_all"></target>
+</build>

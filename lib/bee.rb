@@ -1,5 +1,7 @@
 require "bee/version"
 
+require "bee/config/Autotools.rb"
+
 require "bee/writer/Writer.rb"
 require "bee/writer/Neo4jWriter.rb"
 
