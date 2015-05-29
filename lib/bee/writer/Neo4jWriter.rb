@@ -5,15 +5,23 @@ module Bee
     def initialize(db_path=".beedb")
       @session = Neo4j::Session.open(:embedded_db, db_path)
       @session.start
+
+      @nodecache = Hash.new
     end
 
-    def addNode
+    def startup
+      # NOP
+    end
+
+    def addNode(name)
       node = nil
 
       Neo4j::Transaction.run do
         node = Neo4j::Node.create({}, :node)
         yield node
       end
+
+      @nodecache[name] = node.neo_id
 
       return node
     end
@@ -38,18 +46,28 @@ module Bee
     end
 
     def getNodeByName(name, add=false)
-      nodes = Neo4j::Label.find_nodes(:node, :name, name)
-      if (nodes.count != 1)
-        if (add and nodes.count == 0)
-          nodes << addNode do |n|
-            addProperty(n, :name, name)
+      mynode = Neo4j::Node.load(@nodecache[name])
+      if (!mynode) # Cache miss
+        mynodes = Neo4j::Label.find_nodes(:node, :name, name)
+
+        if (mynodes.size == 1) # we found it!
+          mynode = mynodes[0] 
+        elsif (mynodes.size == 0) # Not in graph
+          if (add) # Should we try to add the node?
+            mynode = addNode(name) do |n|
+              addProperty(n, :name, name)
+            end
+          else
+            raise "ERROR: Node '#{name}' not found"
           end
+        elsif (mynodes.size > 1)
+          raise "ERROR: Unexpected number of nodes #{mynodes.size} with name '#{name}'"
         else
-          raise "ERROR: Unexpected number of nodes #{nodes.count} with name = '#{name}'" 
+          raise "ERROR: Something very strange happened..."
         end
       end
 
-      return nodes[0]
+      return mynode
     end
 
     def finished

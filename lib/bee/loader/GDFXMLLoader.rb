@@ -8,7 +8,7 @@ module Bee
   class GDFXMLLoader < Loader
     def node(name, cmd)
       if (!isJunk(name))
-        node = @writer.getNodeByName(name, true)
+        node = @writer.getNodeByName(name)
         @writer.addProperty(node, :command, cmd)
       end
     end

@@ -7,8 +7,8 @@ module Bee
     end
 
     def load
+      @writer.startup
       load_hook
-
       @writer.finished
 
       return true

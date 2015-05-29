@@ -46,7 +46,7 @@ module Bee
       # Skip uninteresting nodes
       return if (isJunk(row_spl[0]))
 
-      @writer.addNode do |n|
+      @writer.addNode(row_spl[0]) do |n|
         row_spl.size.times do |i|
           @writer.addProperty(n, @types[i].intern, process_value(@types[i], row_spl[i]))
         end
