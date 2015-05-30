@@ -66,8 +66,8 @@ module Bee
       return if (isJunk(row_spl[0]) or isJunk(row_spl[1]))
 
       # Find the nodes by name
-      from = @writer.getNodeByName(row_spl[0])
-      to = @writer.getNodeByName(row_spl[1])
+      from = @writer.getNode(:name, row_spl[0])
+      to = @writer.getNode(:name, row_spl[1])
 
       from_nid = @writer.getProperty(from, :nid)
       to_nid = @writer.getProperty(to, :nid)

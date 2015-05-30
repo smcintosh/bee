@@ -37,31 +37,36 @@ module Bee
       return edge
     end
 
-    def addProperty(ele, key, val)
+    def addProperty(ele, key, val, label=false)
       ele[key] = val
+    end
+
+    def addLabel(ele, label)
+      ele.add_label(label)
     end
 
     def getProperty(ele, key)
       return ele[key]
     end
 
-    def getNodeByName(name, add=false)
-      mynode = Neo4j::Node.load(@nodecache[name])
+    def getNode(key, value, add=false)
+      mynode = Neo4j::Node.load(@nodecache[key])
       if (!mynode) # Cache miss
-        mynodes = Neo4j::Label.find_nodes(:node, :name, name)
+        mynodes = Neo4j::Label.find_nodes(:node, key, value)
 
         if (mynodes.size == 1) # we found it!
           mynode = mynodes[0] 
         elsif (mynodes.size == 0) # Not in graph
           if (add) # Should we try to add the node?
-            mynode = addNode(name) do |n|
-              addProperty(n, :name, name)
+            mynode = addNode(value) do |n|
+              addProperty(n, key, value)
             end
           else
-            raise "ERROR: Node '#{name}' not found"
+            #raise "ERROR: Node with property '#{key}' = '#{value}' not found"
+            mynode = nil
           end
         elsif (mynodes.size > 1)
-          raise "ERROR: Unexpected number of nodes #{mynodes.size} with name '#{name}'"
+          raise "ERROR: Unexpected number of nodes #{mynodes.size} with property '#{key}' = '#{value}'"
         else
           raise "ERROR: Something very strange happened..."
         end

@@ -25,10 +25,5 @@ module Bee
     def load_hook
       raise "ERROR: Load hook is not implemented"
     end
-
-    def handle_row(row_spl)
-      raise "ERROR: Row handler is not implemented"
-    end
-
   end
 end
