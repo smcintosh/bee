@@ -1,0 +1,21 @@
+#!/usr/bin/env jruby
+
+require 'bee'
+
+config = Bee::Autotools.new 
+
+loader = Bee::GDFLoader.new(ARGV[0], Bee::Neo4jWriter.new, config)
+
+print "Loading GDF file..."
+loader.load
+puts "DONE"
+
+# test if xml file exists
+xmlfile = "#{ARGV[0]}.xml"
+if (File.exists?(xmlfile))
+  loader = Bee::GDFXMLLoader.new(xmlfile, Bee::Neo4jWriter.new, config)
+
+  print "Loading GDF XML file..."
+  loader.load
+  puts "DONE"
+end
