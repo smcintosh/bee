@@ -20,7 +20,13 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+To run the GDF importing tool, simply execut 
+
+```shell
+$ bin/gdf_importer <GDF_file>
+```
+
+Options and configuration are still under development. Currently, an embedded Neo4j instance is created in the directory that the tool is executed in with the name .beedb.
 
 ## Development
 
