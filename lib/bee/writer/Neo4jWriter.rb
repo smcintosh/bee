@@ -27,10 +27,13 @@ module Bee
     end
 
     def addEdge(et, from, to)
-      edge = nil
+      edge = from.rels(dir: :outgoing, between: to)
 
       Neo4j::Transaction.run do
-        edge = Neo4j::Relationship.create(et, from, to)
+        if (!edge or edge.empty?)
+          edge = Neo4j::Relationship.create(et, from, to)
+        end
+
         yield edge
       end
 
