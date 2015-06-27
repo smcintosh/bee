@@ -379,7 +379,6 @@ module Bee
     end
 
     def parse
-
       @currLine = 0
       File.foreach(@traceFileName) do |line|
         @currLine = @currLine + 1
@@ -446,6 +445,15 @@ module Bee
       warn "Finished parsing.. exporting"
     end
 
+    def addPkgMap(mapfile)
+      @pkgmap = {}
+
+      File.foreach(mapfile) do |line|
+        fname,res_fname,pkg = line.strip.split(",")
+        @pkgmap[fname] = pkg
+      end
+    end
+
     # TODO: Need to implement this...
     def isJunkTask(task)
       return false
@@ -482,30 +490,59 @@ module Bee
 
       warn file.filename
 
-      fname = file.filename.start_with?("/") ? file.filename : "<root>/#{file.filename}"
+      fname = file.filename
+      internal = 0
+
+      if (!file.filename.start_with?("/"))
+        fname = "<root>/#{file.filename}"
+        internal = 1
+      end
 
       # N;file;<root>/src/.deps/xo-print.Po;<root>/src/.deps/xo-print.Po;in
-      myNode = @writer.getNode(:nid, fname)
-      if (!myNode)
-        myNode = @writer.addNode(fname) do |n|
+
+      myfile = @writer.getNode(:nid, fname)
+      if (!myfile)
+        myfile = @writer.addNode(fname) do |n|
           @writer.addProperty(n, "nid", fname)
-          @writer.addProperty(n, "internal", (fname.start_with?("<root>") ? 1 : 0))
+          @writer.addProperty(n, "internal", internal)
           @writer.addLabel(n, :file)
         end
       end
 
-      relations = @writer.getNode(:nid, file.taskid)
-      if (!relations)
+      task = @writer.getNode(:nid, file.taskid)
+      if (!task)
         raise "Could not locate relation with task id #{file.taskid}"
       end
 
-      op = translate_op(file.op)
-      case op
-      when "read"
-        @writer.addEdge(op, myNode, relations) do |e|
+      addNecessaryEdges(translate_op(file.op), myfile, task, fname)
+    end
+
+    def addNecessaryEdges(op, file, task, fname)
+      if (@pkgmap and @pkgmap[fname])
+        pkg = @pkgmap[fname]
+        
+        # get/add node for package
+        pkgnode = @writer.getNode(:nid, pkg)
+        if (!pkgnode)
+          pkgnode = @writer.addNode(pkg) do |n|
+            @writer.addProperty(n, "nid", pkg)
+            @writer.addLabel(n, :pkg)
+          end
+        end
+            
+        # add contains edge from file to package
+        @writer.addEdge("contains", pkgnode, file) do |e|
+        end
+
+        # add edge to package
+        file = pkgnode
+      end
+
+      if (op == "read")
+        @writer.addEdge(op, file, task) do |e|
         end
       else
-        @writer.addEdge(op, relations, myNode) do |e|
+        @writer.addEdge(op, task, file) do |e|
         end
       end
     end

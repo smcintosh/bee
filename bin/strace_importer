@@ -6,6 +6,8 @@ config = Bee::Autotools.new
 
 loader = Bee::STraceLoader.new(ARGV[0], Bee::Neo4jWriter.new, config, ARGV[1])
 
+loader.addPkgMap(ARGV[2]) if (ARGV[2])
+
 print "Loading STrace file..."
 loader.load
 puts "DONE"
