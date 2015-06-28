@@ -6,6 +6,10 @@ require 'uri'
 
 module Bee
   class GDFXMLLoader < Loader
+    def initialize(config)
+      super(config.get(:gdfxml_file), config)
+    end
+
     def node(name, cmd)
       if (!isJunk(name))
         node = @writer.getNode(:name, name)

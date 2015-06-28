@@ -438,11 +438,15 @@ module Bee
   end
 
   class STraceLoader < Loader
-    def initialize(fname, writer, config, executionPath)
-      super(fname, writer, config)
-      @parser = Parser.new(fname, executionPath)
+    def initialize(config)
+      fname = config.get(:strace_file)
+      super(fname, config)
+      @parser = Parser.new(fname, config.get(:build_home))
       @parser.parse()
       warn "Finished parsing.. exporting"
+
+      pkgmapfile = config.get(:pkgmap_file)
+      addPkgMap(pkgmapfile) if (pkgmapfile)
     end
 
     def addPkgMap(mapfile)

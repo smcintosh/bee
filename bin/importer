@@ -1,0 +1,13 @@
+#!/usr/bin/env jruby
+
+require 'bee'
+
+config = Bee::YAMLConfig.new(ARGV[0])
+
+config.get(:loaders).each do |ldrname|
+  loader = Bee.const_get(ldrname).new(config)
+
+  print "Launching loader #{ldrname}..."
+  loader.load
+  puts "DONE"
+end

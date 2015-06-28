@@ -1,7 +1,7 @@
 module Bee
   class GDFLoader < Loader
-    def initialize(fname, writer, config)
-      super(fname, writer, config)
+    def initialize(config)
+      super(config.get(:gdf_file), config)
       @zone = :no_zone 
       @types = []
     end

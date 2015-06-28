@@ -1,7 +1,10 @@
 module Bee
   class Loader
-    def initialize(fname, writer, config)
-      @writer = writer
+    def initialize(fname, config)
+      beedb = config.get(:beedb)
+      @writer = beedb ?
+        Bee.const_get(config.get(:writer)).new(beedb) :
+        Bee.const_get(config.get(:writer)).new
       @fname = fname
       @config = config
     end
@@ -16,9 +19,11 @@ module Bee
 
     def isJunk(name)
       # Skip the uninteresting files!
-      # For some reason, splat operator doesn't seem to work for class
-      # variables, so we store it as a local variable, and then splat it
-      myjunk = @config.junkfiles
+      myjunk = @config.get(:junkfiles)
+      myjunk.size.times do |i|
+        myjunk[i].gsub!(/\./, "_")
+      end
+
       return (name.downcase.end_with?(*myjunk))
     end
 

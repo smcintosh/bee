@@ -30,7 +30,9 @@ module Bee
       edge = from.rels(dir: :outgoing, between: to)
 
       Neo4j::Transaction.run do
-        if (!edge or edge.empty?)
+        if (edge and !edge.empty?)
+          edge = edge.first
+        else
           edge = Neo4j::Relationship.create(et, from, to)
         end
 

@@ -1,0 +1,26 @@
+gdf_file: spec/data/patchelf.gdf
+gdfxml_file: spec/data/patchelf.gdf.xml
+strace_file: spec/data/patchelf.strace
+pkgmap_file: spec/data/patchelf.lift.csv
+
+build_home: /home/shane/src/patchelf-0.8
+
+#beedb: .beedb
+
+loaders:
+  - GDFLoader
+  - GDFXMLLoader
+  - STraceLoader
+
+writer: Neo4jWriter
+
+junkfiles:
+  - makefile
+  - makefile.am
+  - config.status
+  - config.h.in
+  - configure
+  - configure.ac
+  - aclocal.m4
+  - .po
+  - .plo
