@@ -443,10 +443,12 @@ module Bee
       super(fname, config)
       @parser = Parser.new(fname, config.get(:build_home))
       @parser.parse()
-      warn "Finished parsing.. exporting"
+      #warn "Finished parsing.. exporting"
 
       pkgmapfile = config.get(:pkgmap_file)
       addPkgMap(pkgmapfile) if (pkgmapfile)
+
+      @childparent = {}
     end
 
     def addPkgMap(mapfile)
@@ -463,24 +465,47 @@ module Bee
       return false
     end
 
+    def lookup_task(tid)
+      tid = @childparent[tid] ? @childparent[tid] : tid 
+      task = @writer.getNode(:nid, tid)
+      if (!task)
+        raise "Could not locate relation with task id #{tid}"
+      end
+
+      return task
+    end
+
     def handle_task(task)
       # N;process;5608;/usr/bin/msgfmt;<root>/po;execve("/usr/bin/msgfmt", ["/usr/bin/msgfmt", "-c", "-o", "./pt_BR.gmo", "pt_BR.po"], [/* 22 vars */]) = 0
       return if (isJunkTask(task))
 
-      myNode = @writer.addNode(task.taskid) do |n|
-        @writer.addProperty(n, "nid", task.taskid)
-        @writer.addProperty(n, "command", task.command)
-        @writer.addProperty(n, "dir", task.currentDir)
-        @writer.addLabel(n, :process)
+      if (task.parentTask)
+        pnode = lookup_task(task.parentTask)
+
+        pcommand = @writer.getProperty(pnode, :command)
+        flattens = @config.get(:strace_flatten)
+        flattens.size.times do |i|
+          if (!flattens[i].start_with?('/'))
+            flattens[i] = "/#{flattens[i]}"
+          end
+        end
+        
+        if (pcommand and pcommand.downcase.end_with?(*flattens))
+          @childparent[task.taskid] = @writer.getProperty(pnode, :nid)
+        end
       end
 
-      if (task.parentTask)
-        node = @writer.getNode(:nid, task.parentTask)
-        if (!node)
-          raise "Could not locate parent task #{task.parentTask}"
+      if (!@childparent[task.taskid])
+        myNode = @writer.addNode(task.taskid) do |n|
+          @writer.addProperty(n, "nid", task.taskid)
+          @writer.addProperty(n, "command", task.command)
+          @writer.addProperty(n, "dir", task.currentDir)
+          @writer.addLabel(n, :process)
         end
-
-        @writer.addEdge("child", node, myNode) do |e|
+        
+        if (task.parentTask)
+          @writer.addEdge("child", pnode, myNode) do |e|
+          end
         end
       end
     end
@@ -492,7 +517,7 @@ module Bee
     def handle_file(file)
       return if (isJunkFile(file))
 
-      warn file.filename
+      #warn file.filename
 
       fname = file.filename
       internal = 0
@@ -513,12 +538,10 @@ module Bee
         end
       end
 
-      task = @writer.getNode(:nid, file.taskid)
-      if (!task)
-        raise "Could not locate relation with task id #{file.taskid}"
-      end
-
-      addNecessaryEdges(translate_op(file.op), myfile, task, fname)
+      addNecessaryEdges(translate_op(file.op),
+                        myfile,
+                        lookup_task(file.taskid),
+                        fname)
     end
 
     def addNecessaryEdges(op, file, task, fname)
@@ -577,14 +600,14 @@ module Bee
         handle_task(task)
         i += 1
       end
-      warn("Exported #{i} tasks")
+      #warn("Exported #{i} tasks")
 
       i = 0
       @parser.each_file do |file|
         handle_file(file)
         i += 1
       end
-      warn("Exported #{i} files")
+      #warn("Exported #{i} files")
     end
   end
 end
