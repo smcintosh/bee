@@ -18,15 +18,19 @@ Or install it yourself as:
 
     $ gem install bee
 
+## Configuration 
+
+We use [YAML](http://yaml.org/) configuration files to configure the importer command. An example configuration file can be found in `bin/config.yml`.
+
 ## Usage
 
-To run the GDF importing tool, simply execut 
+To run the importing tool, simply execute
 
 ```shell
-$ bin/gdf_importer <GDF_file>
+$ bin/importer <YAML_file>
 ```
 
-Options and configuration are still under development. Currently, an embedded Neo4j instance is created in the directory that the tool is executed in with the name .beedb.
+Options and configuration are still under development. Currently, an embedded Neo4j instance is created under the `.beedb` in the current directory. A different path can be specified using the `beedb` configuration parameter in the YAML file.
 
 ## Development
 
