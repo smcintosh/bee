@@ -1,3 +1,5 @@
+require 'logger'
+
 module Bee
   class Loader
     def initialize(fname, config)
@@ -7,6 +9,9 @@ module Bee
         Bee.const_get(config.get(:writer)).new
       @fname = fname
       @config = config
+
+      @logger = Logger.new(config.get(:logfile))
+      @logger.level = Logger.const_get(config.get(:loglevel))
     end
 
     def load
@@ -24,7 +29,10 @@ module Bee
         myjunk[i].gsub!(/\./, "_")
       end
 
-      return (name.downcase.end_with?(*myjunk))
+      skip = name.downcase.end_with?(*myjunk)
+      @logger.info("Skipping #{name.downcase.end_with?(*myjunk)}") if (skip)
+
+      return (skip)
     end
 
     def load_hook

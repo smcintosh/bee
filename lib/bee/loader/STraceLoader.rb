@@ -201,7 +201,7 @@ module Bee
 
       if not currentDir =~ /^\//
         currentDir = File.expand_path(currentDir, @defaultDir)
-        warn "Converted from relative to absolute path in setcurrent directory: [#{currentDir}]"
+        @logger.warn("Converted from relative to absolute path in setcurrent directory: [#{currentDir}]")
       end
 
       if (not @beginDir) 
@@ -382,7 +382,7 @@ module Bee
       @currLine = 0
       File.foreach(@traceFileName) do |line|
         @currLine = @currLine + 1
-        warn("current #{sprintf("%10d",@currLine)}") if @currLine % 50000 == 0;
+        @logger.info("current #{sprintf("%10d",@currLine)}") if @currLine % 50000 == 0;
 
         # skip this, we have already handled it and the pid does not exist any more
         next if line =~ /^\d+ \+\+\+ exited with \d+ \+\+\+$/;
@@ -414,7 +414,7 @@ module Bee
           end
         end
 
-        warn "This code should not be executed: it means some tasks didn't end properly (or our code is faulty)"
+        @logger.error("This code should not be executed: it means some tasks didn't end properly (or our code is faulty)")
       end
 
     rescue Exception => e
@@ -443,7 +443,8 @@ module Bee
       super(fname, config)
       @parser = Parser.new(fname, config.get(:build_home))
       @parser.parse()
-      #warn "Finished parsing.. exporting"
+
+      @logger.info("Finished parsing.. exporting")
 
       pkgmapfile = config.get(:pkgmap_file)
       addPkgMap(pkgmapfile) if (pkgmapfile)
@@ -517,7 +518,7 @@ module Bee
     def handle_file(file)
       return if (isJunkFile(file))
 
-      #warn file.filename
+      @logger.debug(file.filename)
 
       fname = file.filename
       internal = 0
@@ -600,14 +601,14 @@ module Bee
         handle_task(task)
         i += 1
       end
-      #warn("Exported #{i} tasks")
+      @logger.info("Exported #{i} tasks")
 
       i = 0
       @parser.each_file do |file|
         handle_file(file)
         i += 1
       end
-      #warn("Exported #{i} files")
+      @logger.info("Exported #{i} files")
     end
   end
 end

@@ -5,6 +5,9 @@ pkgmap_file: spec/data/patchelf.lift.csv
 
 build_home: /home/shane/src/patchelf-0.8
 
+logfile: bee.log
+loglevel: INFO
+
 #beedb: .beedb
 
 loaders:

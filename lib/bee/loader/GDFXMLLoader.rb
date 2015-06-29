@@ -12,6 +12,7 @@ module Bee
 
     def node(name, cmd)
       if (!isJunk(name))
+        @logger.debug("Updating #{name} with command #{cmd}")
         node = @writer.getNode(:name, name)
         @writer.addProperty(node, :command, cmd)
       end

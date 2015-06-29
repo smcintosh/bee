@@ -46,6 +46,7 @@ module Bee
       # Skip uninteresting nodes
       return if (isJunk(row_spl[0]))
 
+      @logger.info("Adding node #{row_spl[0]}")
       @writer.addNode(row_spl[0]) do |n|
         row_spl.size.times do |i|
           @writer.addProperty(n, @types[i].intern, process_value(@types[i], row_spl[i]))
@@ -80,6 +81,7 @@ module Bee
         edge_type = :external_depends
       end
 
+      @logger.info("Adding #{edge_type.to_s} edge from #{row_spl[0]} to #{row_spl[1]}")
       @writer.addEdge(edge_type, from, to) do |e|
          row_spl.size.times do |i|
            @writer.addProperty(e, @types[i].intern, row_spl[i])
@@ -88,6 +90,7 @@ module Bee
     end
 
     def handle_row(row)
+      @logger.debug("Processing: #{row}")
       @zone = check_zone(row, @zone)
 
       case row
@@ -99,7 +102,9 @@ module Bee
         # Check that the split length matches the definition length
         row_spl = row.split(",")
         if (row_spl.size != @types.size)
-          raise "ERROR: Row splits have #{row_spl.size} elements while definition specifies #{@types.size}"
+          msg = "Row splits have #{row_spl.size} elements while definition specifies #{@types.size}"
+          @logger.fatal(msg)
+          raise msg
         end
 
         case @zone
@@ -110,7 +115,9 @@ module Bee
           edge(row_spl)
 
         else
-          raise "ERROR: Row '#{row}' in an unrecognized zone of the file"
+          msg = "Row '#{row}' in an unrecognized zone of the file"
+          @logger.fatal(msg)
+          raise msg
         end
       end
     end
