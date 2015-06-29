@@ -19,6 +19,8 @@ module Bee
     end
 
     def load_hook
+      @logger.info("=== STARTING GDFXMLLoader ===")
+
       xmlfile = File.new(@fname)
       xmldata = REXML::Document.new(xmlfile)
 
@@ -31,6 +33,8 @@ module Bee
 
         node(name, cmd)
       end
+
+      @logger.info("=== FINISHED GDFXMLLoader ===")
     end
   end
 end

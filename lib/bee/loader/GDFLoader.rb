@@ -2,6 +2,7 @@ module Bee
   class GDFLoader < Loader
     def initialize(config)
       super(config.get(:gdf_file), config)
+
       @zone = :no_zone 
       @types = []
     end
@@ -124,10 +125,14 @@ module Bee
     end
 
     def load_hook
+      @logger.info("=== STARTING GDFLoader ===")
+
       File.foreach(@fname) do |row|
         row.strip!
         handle_row(row)
       end
+
+      @logger.info("=== FINISHED GDFLoader ===")
     end
   end
 end
