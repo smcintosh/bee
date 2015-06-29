@@ -2,6 +2,9 @@ require 'uri'
 
 module Bee
   class STraceLoader < Loader
+
+    include LogUtils
+
     def initialize(config)
       fname = config.get(:strace_file)
       super(fname, config)
@@ -9,6 +12,9 @@ module Bee
 
       pkgmapfile = config.get(:pkgmap_file)
       addPkgMap(pkgmapfile) if (pkgmapfile)
+
+      @taskqueue = {}
+      @filequeue = {}
 
       @childparent = {}
     end
@@ -30,11 +36,33 @@ module Bee
     def lookup_task(tid)
       tid = @childparent[tid] ? @childparent[tid] : tid 
       task = @writer.getNode(:nid, tid)
-      if (!task)
-        raise "Could not locate relation with task id #{tid}"
-      end
+
+      fatalAndRaise("Could not locate relation with task id #{tid}") if (!task)
 
       return task
+    end
+
+    def handle_tasks_with_parents(task)
+      # Add yourself
+      handle_task(task)
+      @t += 1
+
+      # Process the files associated with this task
+      if (@filequeue[task.taskid])
+        @filequeue[task.taskid].each do |f|
+          handle_file(f)
+          @f += 1
+        end
+        @filequeue[task.taskid].clear
+      end
+
+      # Process all children
+      if (@taskqueue[task.taskid])
+        @taskqueue[task.taskid].each do |t|
+          handle_tasks_with_parents(t)
+        end
+        @taskqueue[task.taskid].clear
+      end
     end
 
     def handle_task(task)
@@ -153,7 +181,7 @@ module Bee
       when "unlink"
         rtn = "unlink"
       else
-        raise "Unknown relation type #{op}"
+        fatalAndRaise("Unknown relation type #{op}")
       end
 
       return rtn
@@ -162,23 +190,30 @@ module Bee
     def load_hook
       @logger.info("=== STARTING STraceLoader ===")
 
-      t = 0
-      f = 0
+      @t = 0
+      @f = 0
       @parser.each do |type, item|
         case type
         when :task
-          handle_task(item)
-          t += 1
-        when :file
-          handle_file(item)
-          f += 1
-        else
-          msg = "Unrecognized strace item type #{item.type}"
-          @logger.fatal(msg)
-          raise msg
-        end
+          if (item.parentTask and !@writer.getNode(:nid, item.parentTask))
+            @taskqueue[item.parentTask] = [] if (!@taskqueue[item.parentTask])
+            @taskqueue[item.parentTask] << item
+          else
+            handle_tasks_with_parents(item)
+          end
 
-      @logger.info("Exported #{t} tasks and #{f} files")
+        when :file
+          # Queue files for where the task is finished
+          @filequeue[item.taskid] = [] if (!@filequeue[item.taskid])
+          @filequeue[item.taskid] << item
+
+        else
+          fatalAndRaise("Unrecognized strace item type #{item.type}")
+
+        end
+      end
+
+      @logger.info("Exported #{@t} tasks and #{@f} files")
 
       @logger.info("=== FINISHED STraceLoader ===")
     end

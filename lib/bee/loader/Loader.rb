@@ -2,6 +2,8 @@ require 'logger'
 
 module Bee
   class Loader
+    include LogUtils
+
     def initialize(fname, config)
       beedb = config.get(:beedb)
       @writer = beedb ?
@@ -30,13 +32,13 @@ module Bee
       end
 
       skip = name.downcase.end_with?(*myjunk)
-      @logger.info("Skipping #{name.downcase.end_with?(*myjunk)}") if (skip)
+      @logger.info("Skipping #{name}") if (skip)
 
       return (skip)
     end
 
     def load_hook
-      raise "ERROR: Load hook is not implemented"
+      fatalAndRaise("Load hook is not implemented")
     end
   end
 end

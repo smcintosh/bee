@@ -1,5 +1,8 @@
 module Bee
   class STraceParser
+
+    include LogUtils
+
     def initialize(traceFileName, executionPath, logger)
       @traceFileName = traceFileName
 
@@ -10,15 +13,14 @@ module Bee
       @files = Array.new
       @currLine = -1;
       @logger = logger
+      @noneCompleted = true
     end
 
     def create_task_if_needed(line)
       if (line =~ /([0-9]+)/) 
         create_task_if_needed_pid($1)
       else
-        msg = "Unable top parse input line [#{line}]"
-        @logger.fatal(msg)
-        raise msg
+        fatalAndRaise("Unable top parse input line [#{line}]")
       end
     end
 
@@ -28,8 +30,9 @@ module Bee
       if (!@currentTasks[thisPid])
         @logger.info("New task #{thisPid}")
         @currentTasks[thisPid] = STraceTask.new(thisPid, @currLine, @executionPath, @logger)
-        if (@currentTasks.length == 1 and @completedTasks.length == 0) 
+        if (@currentTasks.length == 1 and @noneCompleted) 
           @currentTasks[thisPid].setCurrentDir(@executionPath)
+          @noneCompleted = false
         end
       end
     end
@@ -39,9 +42,7 @@ module Bee
 
       if (line =~ /([0-9]+)(.+) <unfinished \.\.\.>$/) 
         if (@saveUnfinished[$1.to_i])
-          msg = "Continuation for line #{$1} already in progress" 
-          @logger.fatal(msg)
-          raise msg
+          fatalAndRaise("Continuation for line #{$1} already in progress")
         end
 
         @saveUnfinished[$1.to_i] = $2
@@ -64,18 +65,16 @@ module Bee
     def process_file_rename(pline)
       thisTask = @currentTasks[pline.pid];
       if (pline.parms.length != 2) 
-        msg = "Rename has unexpected number of parameters #{pline.data}"
-        @logger.fatal(msg)
-        raise msg
+        fatalAndRaise("Rename has unexpected number of parameters #{pline.data}")
       end
       
-      @files.push(TraceFile.new(thisTask, pline.parms[0],'rename-in', @currLine,[], @executionPath))
-      @files.push(TraceFile.new(thisTask, pline.parms[1],'rename-out',@currLine,[], @executionPath))
+      @files.push(STraceFile.new(thisTask, pline.parms[0],'rename-in', @currLine,[], @executionPath))
+      @files.push(STraceFile.new(thisTask, pline.parms[1],'rename-out',@currLine,[], @executionPath))
     end
 
     def process_file(pline, op, mode)
       thisTask = @currentTasks[pline.pid];
-      @files.push(TraceFile.new(thisTask, pline.parms[0], op, @currLine, mode, @executionPath))
+      @files.push(STraceFile.new(thisTask, pline.parms[0], op, @currLine, mode, @executionPath))
     end
 
     def process_line(pline)
@@ -100,9 +99,7 @@ module Bee
 
       elsif (pline.execType?)
         if (pline.parms.nil? or pline.parms.length == 0)
-          msg = "We could not parse the parameters [#{pline.data}]"
-          @logger.fatal(msg)
-          raise msg
+          fatalAndRaise("We could not parse the parameters [#{pline.data}]")
         end
 
         thisTask.setCommand(pline.parms[0])
@@ -124,9 +121,7 @@ module Bee
         elsif (mode.include?("O_RDWR")) 
           process_file(pline, 'open-read-write', mode)
         else 
-          msg = "This is a mode we do not recognize #{mode.inspect}"
-          @logger.fatal(msg)
-          raise msg
+          fatalAndRaise("This is a mode we do not recognize #{mode.inspect}")
         end
 
       elsif (pline.unlink? and  pline.resultValue.to_i == 0) 
@@ -160,11 +155,9 @@ module Bee
         line = check_if_continuation(line)
 
         # now process the line
-        pline = STraceLine.new(line, @currLine)
+        pline = STraceLine.new(line, @currLine, @logger)
         if (!pline.pid)
-          msg = "Unable to parse pid from line #{@currLine}"
-          @logger.fatal(msg)
-          raise msg
+          fatalAndRaise("Unable to parse pid from line #{@currLine}")
         end
 
         code = process_line(pline)
@@ -183,37 +176,8 @@ module Bee
           next
 
         else
-          msg = "Unrecognized return code #{code} from process_line()"
-          @logger.fatal(msg)
-          raise msg
+          fatalAndRaise("Unrecognized return code #{code} from process_line()")
         end
-      end
-
-      # Sort the completed tasks by taskid
-      #@completedTasks.sort_by! {|task| task.taskid}
-
-      # Sanity check
-      #if (@currentTasks.length > 0 )
-      #  @currentTasks.each do |key, task|
-      #    if (task)
-      #      puts "#{key} -> "
-      #      task.printTask()
-      #    end
-      #  end
-
-      #  @logger.error("This code should not be executed: it means some tasks didn't end properly (or our code is faulty)")
-      #end
-    end
-
-    def each_task
-      @completedTasks.each do |task|
-        yield task
-      end
-    end
-
-    def each_file
-      @files.each do |file|
-        yield file
       end
     end
   end

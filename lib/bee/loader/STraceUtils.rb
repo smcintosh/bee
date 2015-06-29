@@ -7,15 +7,15 @@ module Bee
     attr_accessor :data
     attr_accessor :parms
 
+    include LogUtils
+
     def initialize(line, lineNumber, logger)
       @lineNumber = lineNumber
       @logger = logger
 
       fields = /^([0-9]+) +(.+)$/.match(line)
       if (!fields)
-        msg = "Illegal input '#{line}' [Line number: #{lineNumber}]"
-        @logger.fatal(msg)
-        raise msg
+        fatalAndRaise("Illegal input '#{line}' [Line number: #{lineNumber}]")
       end
 
       @pid = fields[1].to_i
@@ -52,9 +52,7 @@ module Bee
         resultValue = $1
       elsif (@data =~ /^<\.\.\. (\w+)/) 
         #op = $1 + "-cont"
-        msg = "Encountered unexpected operation in #{@data}"
-        @logger.fatal(msg)
-        raise msg
+        fatalAndRaise("Encountered unexpected operation in #{@data}")
       else 
         op = "XXXX-" + @data;
         @logger.warn("Unrecognized operation type treated as #{op}")
@@ -129,7 +127,9 @@ module Bee
       if not @currentDir =~ /^\//
         # this function does not work with relative directories, period
         # because expand_path will use the current directory in the local computer to do it
-        raise "directory of File should be absolute file [#{f}] currentDir [#{@currentDir}] " unless f =~ /^\//
+        unless f =~ /^\//
+          fatalAndRaise("directory of File should be absolute file [#{f}] currentDir [#{@currentDir}]")
+        end
       end
 
       # if directory is absolute, clean it up (remove relative references
@@ -159,14 +159,14 @@ module Bee
     attr_accessor :beginDir
     attr_accessor :defaultDir
 
+    include LogUtils
+
     def initialize(pid, lineNumber, defaultDir, logger)
       @logger = logger
 
       # assertions
       unless (defaultDir =~ /^\//)
-        msg = "parameter defaultDir should be absolute [#{defaultDir}]"
-        @logger.fatal(msg)
-        raise msg
+        fatalAndRaise("parameter defaultDir should be absolute [#{defaultDir}]")
       end
 
       @taskid = @@currentTask
@@ -264,7 +264,9 @@ module Bee
       if not @currentDir =~ /^\//
         # this function does not work with relative directories, period
         # because expand_path will use the current directory in the local computer to do it
-        raise "directory of File should be absolute file [#{f}] currentDir [#{@currentDir}] " unless f =~ /^\//
+        unless f =~ /^\//
+          fatalAndRaise("directory of File should be absolute file [#{f}] currentDir [#{@currentDir}]") 
+        end
       end
 
       # if directory is absolute, clean it up (remove relative references)

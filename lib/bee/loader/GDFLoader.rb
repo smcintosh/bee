@@ -1,5 +1,8 @@
 module Bee
   class GDFLoader < Loader
+
+    include LogUtils
+
     def initialize(config)
       super(config.get(:gdf_file), config)
 
@@ -104,9 +107,7 @@ module Bee
         # Check that the split length matches the definition length
         row_spl = row.split(",")
         if (row_spl.size != @types.size)
-          msg = "Row splits have #{row_spl.size} elements while definition specifies #{@types.size}"
-          @logger.fatal(msg)
-          raise msg
+          fatalAndRaise("Row splits have #{row_spl.size} elements while definition specifies #{@types.size}")
         end
 
         case @zone
@@ -117,9 +118,7 @@ module Bee
           edge(row_spl)
 
         else
-          msg = "Row '#{row}' in an unrecognized zone of the file"
-          @logger.fatal(msg)
-          raise msg
+          fatalAndRaise("Row '#{row}' in an unrecognized zone of the file")
         end
       end
     end
