@@ -105,8 +105,14 @@ module Bee
       return (!file.filename or file.filename.empty?)
     end
 
+    def is_package_file(fname)
+      return (@pkgmap and @pkgmap[fname])
+    end
+
     def handle_file(file)
       return if (isJunkFile(file))
+      # TODO add a node for the package to the graph... all package info is lost now
+      return if (is_package_file(file.filename))
 
       @logger.debug(file.filename)
 
@@ -137,7 +143,7 @@ module Bee
     end
 
     def addNecessaryEdges(op, file, task, fname)
-      if (@pkgmap and @pkgmap[fname])
+      if (is_package_file(fname))
         pkg = @pkgmap[fname]
         
         # get/add node for package
@@ -204,8 +210,13 @@ module Bee
 
         when :file
           # Queue files for where the task is finished
+          # unless it's a junk or package file
+          if (isJunkFile(item) || is_package_file(item.filename))
+            next
+          end
           @filequeue[item.taskid] = [] if (!@filequeue[item.taskid])
           @filequeue[item.taskid] << item
+          @logger.info("Queueing file: " + item.filename + " for taskid: " + item.taskid.to_s)
 
         else
           fatalAndRaise("Unrecognized strace item type #{item.type}")
@@ -214,7 +225,6 @@ module Bee
       end
 
       @logger.info("Exported #{@t} tasks and #{@f} files")
-
       @logger.info("=== FINISHED STraceLoader ===")
     end
   end
