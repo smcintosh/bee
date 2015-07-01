@@ -55,10 +55,9 @@ module Bee
     end
 
     def getNode(key, value, add=false)
-      mynode = Neo4j::Node.load(@nodecache[key])
+      mynode = Neo4j::Node.load(@nodecache[value])
       if (!mynode) # Cache miss
         mynodes = Neo4j::Label.find_nodes(:node, key, value)
-
         if (mynodes.size == 1) # we found it!
           mynode = mynodes[0] 
         elsif (mynodes.size == 0) # Not in graph
@@ -74,6 +73,10 @@ module Bee
           raise "ERROR: Unexpected number of nodes #{mynodes.size} with property '#{key}' = '#{value}'"
         else
           raise "ERROR: Something very strange happened..."
+        end
+        if (mynode != nil)
+          # actually add the node to the cache now
+          @nodecache[value] = mynode.neo_id
         end
       end
 
