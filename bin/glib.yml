@@ -1,16 +1,16 @@
-gdf_file: spec/data/patchelf.gdf
-gdfxml_file: spec/data/patchelf.gdf.xml
-strace_file: spec/data/patchelf.strace
-pkgmap_file: spec/data/patchelf.lift.csv
+gdf_file: spec/data/glib.gdf
+gdfxml_file: spec/data/glib.gdf.xml
+strace_file: spec/data/glib.strace
+pkgmap_file: spec/data/glib.lift.csv
 
-build_home: /home/shane/src/patchelf-0.8
+build_home: /home/shane/src/glib-2.36.0
 
 logfile: bee.log
 loglevel: INFO
 
-outputfile: results_patchelf.log
+outputfile: results_glib.log
 
-beedb: .beedb_patchelf
+beedb: .beedb_glib
 
 loaders:
   - GDFLoader
@@ -33,3 +33,4 @@ junkfiles:
   - aclocal.m4
   - .po
   - .plo
+  - .tpo

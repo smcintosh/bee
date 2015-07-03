@@ -4,7 +4,8 @@ module Bee
    class Neo4jAggregator
      include LogUtils
 
-     def initialize(config, db_path=".beedb")
+     def initialize(config)
+       db_path = config.get(:beedb)
        @session = Neo4j::Session.open(:embedded_db, db_path)
        @session.start
        @dependencies = Hash.new
