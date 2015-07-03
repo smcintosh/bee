@@ -1,0 +1,10 @@
+#!/usr/bin/env jruby
+
+require 'bee'
+
+config = Bee::YAMLConfig.new(ARGV[0])
+
+aggregator = Bee::Neo4jAggregator.new(config)
+
+aggregator.find_rw_dependency_bugs()
+

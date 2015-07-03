@@ -8,6 +8,8 @@ build_home: /home/shane/src/patchelf-0.8
 logfile: bee.log
 loglevel: INFO
 
+outputfile: results.log
+
 #beedb: .beedb
 
 loaders:

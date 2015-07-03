@@ -91,7 +91,7 @@ module Bee
           @writer.addProperty(n, "command", task.command)
           @writer.addProperty(n, "dir", task.currentDir)
           @writer.addLabel(n, :process)
-          @writer.addProperty(n, :node_from, "strace")
+          @writer.addLabel(n, :strace)
         end
         
         if (task.parentTask)
@@ -132,7 +132,7 @@ module Bee
           @writer.addProperty(n, "nid", fname)
           @writer.addProperty(n, "internal", internal)
           @writer.addLabel(n, :file)
-          @writer.addProperty(n, :node_from, "strace")
+          @writer.addLabel(n, :strace)
         end
       end
 
@@ -152,7 +152,7 @@ module Bee
           pkgnode = @writer.addNode(pkg) do |n|
             @writer.addProperty(n, "nid", pkg)
             @writer.addLabel(n, :pkg)
-            @writer.addProperty(n, :node_from, "strace")
+            @writer.addLabel(n, :strace)
           end
         end
             

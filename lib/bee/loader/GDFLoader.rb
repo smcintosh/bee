@@ -54,7 +54,7 @@ module Bee
       @writer.addNode(row_spl[0]) do |n|
         row_spl.size.times do |i|
           @writer.addProperty(n, @types[i].intern, process_value(@types[i], row_spl[i]))
-          @writer.addProperty(n, :node_from, "gdf")
+          @writer.addLabel(n, :gdf)
         end
 
         # Add full filename

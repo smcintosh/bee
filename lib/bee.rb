@@ -13,3 +13,5 @@ require "bee/loader/GDFXMLLoader.rb"
 require "bee/loader/STraceLoader.rb"
 require "bee/loader/STraceParser.rb"
 require "bee/loader/STraceUtils.rb"
+
+require "bee/report/Neo4jAggregator.rb"
