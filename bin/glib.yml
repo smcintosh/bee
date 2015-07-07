@@ -34,3 +34,8 @@ junkfiles:
   - .po
   - .plo
   - .tpo
+
+ignore_patterns:
+  - h->o
+  - la->la
+  - la->lai
