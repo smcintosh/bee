@@ -6,7 +6,7 @@ module Bee
     def initialize(config)
       super(config.get(:gdf_file), config)
 
-      @zone = :no_zone 
+      @zone = :no_zone
       @types = []
     end
 
@@ -57,6 +57,9 @@ module Bee
           @writer.addLabel(n, :gdf)
         end
 
+        # implicit node check
+        @writer.addProperty(n, :implicit, true)
+
         # Add full filename
         @writer.addProperty(n, :nid,
                             "#{@writer.getProperty(n, :dir)}/#{@writer.getProperty(n, :base)}")
@@ -70,6 +73,9 @@ module Bee
     def edge(row_spl)
       # Skip uninteresting nodes
       return if (isJunk(row_spl[0]) or isJunk(row_spl[1]))
+
+      # check if edge is implicit
+      is_implicit = row_spl[6].eql?("1")
 
       # Find the nodes by name
       from = @writer.getNode(:name, row_spl[0])
@@ -91,6 +97,12 @@ module Bee
          row_spl.size.times do |i|
            @writer.addProperty(e, @types[i].intern, row_spl[i])
          end
+      end
+      # not_implicit label from nodes if the edge is not implicit
+      if (!is_implicit)
+        @logger.info("setting implicit property for #{row_spl[0]} and #{row_spl[1]}")
+        @writer.addProperty(from, :implicit, false)
+        @writer.addProperty(to, :implicit, false)
       end
     end
 
@@ -130,7 +142,6 @@ module Bee
         row.strip!
         handle_row(row)
       end
-
       @logger.info("=== FINISHED GDFLoader ===")
     end
   end

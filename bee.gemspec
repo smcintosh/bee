@@ -32,6 +32,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec"
 
   # Need neo4j
-  spec.add_development_dependency "neo4j", ">= 4.0.7"
+  spec.add_development_dependency "neo4j", "> 5.0.0"
   spec.add_development_dependency "neo4j-community"
 end
