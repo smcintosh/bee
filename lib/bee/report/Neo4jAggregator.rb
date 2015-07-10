@@ -27,7 +27,7 @@ module Bee
 
      def get_rw_nodes()
        # notice: results of this query represent a bug if there is no dependency n2->n1  !!
-       return Neo4j::Session.query("MATCH (node1:gdf)-[:read]->(compiler:strace)-[:write|read*1..10]->(node2:gdf) return node1, node2,compiler")
+       return Neo4j::Session.query("MATCH (node1:gdf)-[:read]->(compiler:strace)-[:write|read*0..10]->(node3)-[:write]->(node2:gdf) return node1, node2,compiler")
      end
 
 
