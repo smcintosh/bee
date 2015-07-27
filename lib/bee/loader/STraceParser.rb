@@ -17,7 +17,7 @@ module Bee
     end
 
     def create_task_if_needed(line)
-      if (line =~ /([0-9]+)/) 
+      if (line =~ /([0-9]+)/)
         create_task_if_needed_pid($1)
       else
         fatalAndRaise("Unable top parse input line [#{line}]")
@@ -30,7 +30,7 @@ module Bee
       if (!@currentTasks[thisPid])
         @logger.info("New task #{thisPid}")
         @currentTasks[thisPid] = STraceTask.new(thisPid, @currLine, @executionPath, @logger)
-        if (@currentTasks.length == 1 and @noneCompleted) 
+        if (@currentTasks.length == 1 and @noneCompleted)
           @currentTasks[thisPid].setCurrentDir(@executionPath)
           @noneCompleted = false
         end
@@ -40,7 +40,7 @@ module Bee
     def unfinished?(line)
       rtn = false
 
-      if (line =~ /([0-9]+)(.+) <unfinished \.\.\.>$/) 
+      if (line =~ /([0-9]+)(.+) <unfinished \.\.\.>$/)
         if (@saveUnfinished[$1.to_i])
           fatalAndRaise("Continuation for line #{$1} already in progress")
         end
@@ -64,10 +64,10 @@ module Bee
 
     def process_file_rename(pline)
       thisTask = @currentTasks[pline.pid];
-      if (pline.parms.length != 2) 
+      if (pline.parms.length != 2)
         fatalAndRaise("Rename has unexpected number of parameters #{pline.data}")
       end
-      
+
       @files.push(STraceFile.new(thisTask, pline.parms[0],'rename-in', @currLine,[], @executionPath))
       @files.push(STraceFile.new(thisTask, pline.parms[1],'rename-out',@currLine,[], @executionPath))
     end
@@ -90,7 +90,7 @@ module Bee
       elsif (pline.forkType?)
         # find task id of the parent
         childId = (pline.resultValue).to_i
-        if (!@currentTasks[childId]) 
+        if (!@currentTasks[childId])
           create_task_if_needed_pid(childId)
         end
 
@@ -104,31 +104,31 @@ module Bee
 
         thisTask.setCommand(pline.parms[0])
 
-      elsif (pline.chdir? and pline.resultValue.to_i == 0) 
+      elsif (pline.chdir? and pline.resultValue.to_i == 0)
         thisTask.setCurrentDir(pline.parms[0])
 
       # file related
-      elsif (pline.open? and pline.resultValue.to_i >= 0) 
+      elsif (pline.open? and pline.resultValue.to_i >= 0)
         mode = pline.parms[1].split('|');
 
         rtn = :file
-        if (mode.include?("O_DIRECTORY")) 
-          process_file(pline, 'directory-scan', mode)        
-        elsif (mode.include?("O_RDONLY")) 
+        if (mode.include?("O_DIRECTORY"))
+          process_file(pline, 'directory-scan', mode)
+        elsif (mode.include?("O_RDONLY"))
           process_file(pline, 'open-read-only', mode)
-        elsif (mode.include?("O_WRONLY")) 
+        elsif (mode.include?("O_WRONLY"))
           process_file(pline, 'open-write-only', mode)
-        elsif (mode.include?("O_RDWR")) 
+        elsif (mode.include?("O_RDWR"))
           process_file(pline, 'open-read-write', mode)
-        else 
+        else
           fatalAndRaise("This is a mode we do not recognize #{mode.inspect}")
         end
 
-      elsif (pline.unlink? and  pline.resultValue.to_i == 0) 
+      elsif (pline.unlink? and  pline.resultValue.to_i == 0)
         rtn = :file
         process_file(pline, 'unlink',[])
 
-      elsif (pline.rename?  and  pline.resultValue.to_i == 0) 
+      elsif (pline.rename?  and  pline.resultValue.to_i == 0)
         rtn = :file_rename
         process_file_rename(pline)
 
@@ -139,10 +139,25 @@ module Bee
 
     def each
       @currLine = 0
+      #max = 0
+      total_cnt = %x{wc -l #{@traceFileName}}.split.first.to_i
+      cnt = 0
+      avg_time = 0
 
       File.foreach(@traceFileName) do |line|
         @currLine += 1
+        # do this so we can get some profiling output
+        #if (@currLine >= max)
+        #  return
+        #end
         @logger.info("current #{sprintf("%10d",@currLine)}") if @currLine % 50000 == 0;
+        if (@currLine % 10000 == 0)
+          puts "Row: #{@currLine}/#{total_cnt}"
+          #puts "avg_time: #{avg_time}"
+          #puts "completedTasks: #{@completedTasks}, \
+          #      currentTasks: #{@currentTasks}, saveUnfinished: #{@saveUnfinished}, \
+          #      files: #{@files}"
+        end
 
         # skip this, we have already handled it and the pid does not exist any more
         next if line =~ /^\d+ \+\+\+ exited with \d+ \+\+\+$/
@@ -160,6 +175,7 @@ module Bee
           fatalAndRaise("Unable to parse pid from line #{@currLine}")
         end
 
+        #start = Time.now
         code = process_line(pline)
         case code
         when :file
@@ -171,6 +187,7 @@ module Bee
 
         when :task
           yield :task, @completedTasks.pop
+          nil
 
         when :cont
           next
@@ -178,6 +195,8 @@ module Bee
         else
           fatalAndRaise("Unrecognized return code #{code} from process_line()")
         end
+        #finish = Time.now
+        #avg_time = (avg_time+(finish-start))/2
       end
     end
   end
