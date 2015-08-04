@@ -7,6 +7,7 @@ module Bee
     def initialize(config)
       fname = config.get(:strace_file)
       super(fname, config)
+
       @parser = STraceParser.new(fname, config.get(:build_home), @logger)
 
       pkgmapfile = config.get(:pkgmap_file)
@@ -16,6 +17,8 @@ module Bee
       @filequeue = {}
 
       @childparent = {}
+         # TODO do we really need this? it is a memory hog... probably it is better to just print the names for the dependencies and
+        # replace them using a bash script later?
       @tasks = Hash.new
 
 
@@ -112,10 +115,11 @@ module Bee
     end
 
     def handle_file(file)
+      puts "handlign file: #{file}"
       return if (isJunkFile(file))
       # TODO add a node for the package to the graph... all package info is lost now
-      return if (is_package_file(file.filename))
-
+      #return if (is_package_file(file.filename))
+      puts "here"
       @logger.debug(file.filename)
 
       fname = file.filename
@@ -134,6 +138,10 @@ module Bee
         myfile.fname = fname
         myfile.internal = internal
       end
+      puts "adding necessary edges for file: #{myfile} to "
+      puts "task for file.taskid (#{file.taskid}): "
+      puts lookup_task(file.taskid)
+
       addNecessaryEdges(translate_op(file.op),
                         myfile,
                         lookup_task(file.taskid),
@@ -141,28 +149,33 @@ module Bee
     end
 
     def addNecessaryEdges(op, file, task, fname)
-      if (is_package_file(fname))
-        pkg = @pkgmap[fname]
+      # FIX THIS: package lifting is broken in csv import
+      #if (is_package_file(fname))
+      #  pkg = @pkgmap[fname]
 
         # get/add node for package
-        pkgnode = @writer.getNode(pkg)
-        if (!pkgnode)
-          pkgnode = @writer.addNode(pkg, "strace", "","",pkg=pkg)
-          pkgnode.pkg = pkg
-        end
+      #  pkgnode = @writer.getNode(pkg)
+      #  if (!pkgnode)
+      #    pkgnode = @writer.addNode(pkg, "strace", "","",pkg=pkg)
+      #    pkgnode.pkg = pkg
+      #  end
 
         # add contains edge from file to package
-        @writer.addEdge(pkgnode.pkg, fname, "contains")
+      #  @writer.addEdge(pkgnode.pkg, fname, "contains")
 
         # add edge to package
-        file = pkgnode
-      end
+      #  file = pkgnode
+      #end
+
+      puts "adding necessary edges"
 
       filenode = @writer.getFileNode(fname).name
       case op
       when "read"
+        # use task.taskid here because addEdge gets the node using taskid
         @writer.addEdge(filenode, task.taskid, op)
       when "write"
+        # use task.taskid here because addEdge gets the node using taskid
         @writer.addEdge(task.taskid, filenode, op)
       else
         # skip other relations for now
@@ -211,9 +224,9 @@ module Bee
        when :file
           # Queue files for where the task is finished
           # unless it's a junk or package file
-          if (isJunkFile(item) || is_package_file(item.filename))
-            next
-          end
+          #if (isJunkFile(item) || is_package_file(item.filename))
+          #  next
+          #end
           @filequeue[item.taskid] = [] if (!@filequeue[item.taskid])
           @filequeue[item.taskid] << item
           @logger.info("Queueing file: " + item.filename + " for taskid: " + item.taskid.to_s)
