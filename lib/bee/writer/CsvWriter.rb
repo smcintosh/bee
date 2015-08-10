@@ -11,6 +11,7 @@ module Bee
       @taskid = -1
       @fname = ""
       @internal = 0
+      @pkg = ""
     end
 
     def name
@@ -67,6 +68,14 @@ module Bee
 
     def fname=(fname)
       @fname = fname
+    end
+
+    def pkg
+      @pkg
+    end
+
+    def pkg=(pkg)
+      @pkg = pkg
     end
 
     def to_s
@@ -132,7 +141,7 @@ module Bee
       end
     end
 
-    def addNode(name, from, dir="", command="", fname="")
+    def addNode(name, from, dir="", command="", fname="", pkg="")
       node = Node.new(name, from)
       @nodecache[node.name] = node
       node.id = @node_id

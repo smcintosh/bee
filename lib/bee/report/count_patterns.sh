@@ -1,8 +1,10 @@
 # script to extract and count patterns from the possible issues results file
 #!/bin/bash -xe
 
-ISSUES=$(cat results_qt.log | cut -d ' ' -f 11)
-ISSUES_TOTAL=$(cat results_qt.log | wc -l)
+FILE=$1
+
+ISSUES=$(cat $FILE | cut -d ' ' -f 11)
+ISSUES_TOTAL=$(cat $FILE | wc -l)
 
 # clear file
 > patterns.log

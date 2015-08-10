@@ -1,6 +1,7 @@
+require 'pathname'
+
 module Bee
   class GDFToCsvLoader < Loader
-
     include LogUtils
 
     def initialize(config)
@@ -9,6 +10,8 @@ module Bee
       @zone = :no_zone
       @types = []
       @depends_edges = Hash.new
+      @clean_nodes = Hash.new
+      @dirty_nodes = Hash.new
     end
 
     def check_zone(row, zone)
@@ -47,9 +50,25 @@ module Bee
       return val
     end
 
+    # This is a hack because MAKAO has some issues sometimes with reading relative paths. As a result,
+    # nodes are being generated in the gdf that have a path like blalba../../../bla resulting in a double
+    # node for the same path. This leads to false positives in our approach because dependencies are missing.
+    # So, what we do is we replace dependencies to the 'wrong' node with dependencies to the 'right' node.
+    def isDottedNode(str1, str2, name)
+      fname = "#{str1}/#{str2}"
+      if (fname.include?("../"))
+        path = Pathname.new(fname)
+        cleanpath = path.cleanpath()
+        @dirty_nodes[name] = cleanpath.to_path()
+        return true
+      end
+      return false
+    end
+
     def node(row_spl)
       # Skip uninteresting nodes
       return if (isJunk(row_spl[0]))
+      return if (isDottedNode(row_spl[9], row_spl[10], row_spl[0]))
 
       @logger.info("Adding node #{row_spl[0]}")
 
@@ -74,6 +93,7 @@ module Bee
 
         # add node to depends_edges cache
         @depends_edges[node.id] = Hash.new
+        @clean_nodes[fname] = row_spl[0]
     end
 
     def edge_exists(from, to)
@@ -89,7 +109,16 @@ module Bee
 
       # Find the nodes by name
       from = row_spl[0]
+      if (@dirty_nodes.has_key?(from))
+        # get the clean node from the path in the dirty node
+        from = @clean_nodes[@dirty_nodes[from]]
+      end
+
       to = row_spl[1]
+      if (@dirty_nodes.has_key?(to))
+        puts @dirty_nodes
+        to = @clean_nodes[@dirty_nodes[to]]
+      end
 
       # check if edge is implicit
       is_implicit = row_spl[6].eql?("1")

@@ -115,11 +115,9 @@ module Bee
     end
 
     def handle_file(file)
-      puts "handlign file: #{file}"
       return if (isJunkFile(file))
       # TODO add a node for the package to the graph... all package info is lost now
       #return if (is_package_file(file.filename))
-      puts "here"
       @logger.debug(file.filename)
 
       fname = file.filename
@@ -138,9 +136,6 @@ module Bee
         myfile.fname = fname
         myfile.internal = internal
       end
-      puts "adding necessary edges for file: #{myfile} to "
-      puts "task for file.taskid (#{file.taskid}): "
-      puts lookup_task(file.taskid)
 
       addNecessaryEdges(translate_op(file.op),
                         myfile,
@@ -166,8 +161,6 @@ module Bee
         # add edge to package
       #  file = pkgnode
       #end
-
-      puts "adding necessary edges"
 
       filenode = @writer.getFileNode(fname).name
       case op
