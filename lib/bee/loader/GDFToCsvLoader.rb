@@ -123,9 +123,15 @@ module Bee
       # check if edge is implicit
       is_implicit = row_spl[6].eql?("1")
 
-      @writer.addEdge(from, to, "depends")
+      dep_type = "depends"
+      # ignore implicit nodes
+      if (is_implicit)
+        dep_type = "implicit_depends"
+      end
 
-      @logger.info("Adding depends edge from #{from} to #{to}")
+      @writer.addEdge(from, to, dep_type)
+
+      @logger.info("Adding #{dep_type} edge from #{from} to #{to}")
 
       @depends_edges[@writer.getNode(from).id][@writer.getNode(to).id] = true
 

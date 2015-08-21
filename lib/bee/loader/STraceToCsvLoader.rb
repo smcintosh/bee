@@ -98,10 +98,8 @@ module Bee
 
         @tasks[task.taskid] = node
         if (task.parentTask)
-          #@writer.addEdge(pnode.taskid, node.taskid, "child")
+          # @writer.addEdge(pnode.taskid, node.taskid, "child")
           # do nothing for now with child relations
-          nil
-
         end
       end
     end
@@ -171,8 +169,7 @@ module Bee
         # use task.taskid here because addEdge gets the node using taskid
         @writer.addEdge(task.taskid, filenode, op)
       else
-        # skip other relations for now
-        nil
+        @writer.addEdge(task.taskid, filenode, op)
       end
     end
 
