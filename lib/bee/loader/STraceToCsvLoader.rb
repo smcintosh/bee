@@ -97,8 +97,8 @@ module Bee
         node.dir = task.currentDir
 
         @tasks[task.taskid] = node
-        if (task.parentTask)
-          # @writer.addEdge(pnode.taskid, node.taskid, "child")
+        if (task.parentTask and task.command.eql?("/bin/mv"))
+          @writer.addEdge(pnode.taskid, node.taskid, "child")
           # do nothing for now with child relations
         end
       end
@@ -182,8 +182,10 @@ module Bee
         rtn = "read"
       when "open-read-write", "open-write-only"
         rtn = "write"
-      when "rename-in", "rename-out"
-        rtn = "rename"
+      when "rename-in"
+        rtn = "renamein"
+      when "rename-out"
+        rtn = "renameout"
       when "unlink"
         rtn = "unlink"
       else

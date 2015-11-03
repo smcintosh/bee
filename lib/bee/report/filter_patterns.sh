@@ -1,11 +1,11 @@
 # script to remove possible issues following certain patterns from the possible issues results file
 #!/bin/bash -xe
 
-ISSUES=$(cat results_linux_fixed.log | cut -d ' ' -f 11)
-ISSUES_TOTAL=$(cat results_linux_fixed.log | wc -l)
+ISSUES=$(cat results_qt.log | cut -d ' ' -f 11)
+ISSUES_TOTAL=$(cat results_qt.log | wc -l)
 
 # clear file
-> filtered_results_linux_fixed.log
+> filtered_results_qt.log
 
 # issues have the following format:
 # t3376_opengl_qopengltexturehelper_cpp-R->/home/shane/src/qt/qt-everywhere-opensource-src-5.3.0/qtbase/examples/widgets/draganddrop/puzzle/
@@ -70,27 +70,39 @@ do
 		continue
 	fi
 
-	if [[ "${READ_TARGET}" == *"autoconf"* ]]
+	if [[ "${READ_TARGET}" == *"____"* ]]
 	then 
 		continue
 	fi
+	
 
-	if [[ "${READ_TARGET}" == *"Kconfig"* ]]
-	then 
-		continue
-	fi
+	# linux stuff
+	# if [[ "${READ_TARGET}" == *"autoconf"* ]]
+	#then 
+	#	continue
+	#fi
 
-	if [[ "${READ_TARGET}" == *"t6__config"* ]]
-	then 
-		continue
-	fi
+	#if [[ "${READ_TARGET}" == *"Kconfig"* ]]
+	#then 
+	#	continue
+	#fi
 
-	if [[ "${WRITE_PATTERN}" == *"d" ]]
-	then 
-		continue
-	fi
+	#if [[ "${READ_TARGET}" == *"t6__config"* ]]
+	#then 
+	#	continue
+	#fi
 
-	echo $ISSUE >> filtered_results_linux_fixed.log
+	#if [[ "${WRITE_PATTERN}" == *"d" ]]
+	#then 
+	#	continue
+	#fi
+
+	#if [[ "${WRITE_TARGET}" == *"_mod_o"* ]]
+	#then 
+	#	continue
+	#fi
+
+	echo $ISSUE >> filtered_results_qt.log
 	
 done
 echo "DONE"
