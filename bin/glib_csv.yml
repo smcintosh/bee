@@ -1,0 +1,42 @@
+gdf_file: spec/data/glib.gdf
+gdfxml_file: spec/data/glib.gdf.xml
+strace_file: spec/data/glib.strace
+pkgmap_file: spec/data/glib.lift.csv
+
+build_home: /home/shane/src/glib-2.36.0
+
+logfile: bee.log
+loglevel: INFO
+
+outputfile: results_glib.log
+
+beedb: .beedb_glib
+
+loaders:
+  - GDFToCsvLoader
+  - STraceToCsvLoader
+
+writer: CsvWriter
+
+strace_flatten:
+  - g++
+  - gcc
+
+junkfiles:
+  - makefile
+  - makefile.am
+  - config.status
+  - config.h.in
+  - configure
+  - configure.ac
+  - aclocal.m4
+  - .po
+  - .plo
+  - .tpo
+
+ignore_patterns:
+  - h->o
+  - la->la
+  - la->lai
+  - c->o
+

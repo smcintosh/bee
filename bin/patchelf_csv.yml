@@ -1,0 +1,34 @@
+gdf_file: spec/data/patchelf.gdf
+gdfxml_file: spec/data/patchelf.gdf.xml
+strace_file: spec/data/patchelf.strace
+pkgmap_file: spec/data/patchelf.lift.csv
+
+build_home: /home/shane/src/patchelf-0.8
+
+logfile: bee.log
+loglevel: INFO
+
+outputfile: results_patchelf.log
+
+beedb: .beedb_patchelf
+
+loaders:
+  - GDFToCsvLoader
+  - STraceToCsvLoader
+
+writer: CsvWriter
+
+strace_flatten:
+  - g++
+  - gcc
+
+junkfiles:
+  - makefile
+  - makefile.am
+  - config.status
+  - config.h.in
+  - configure
+  - configure.ac
+  - aclocal.m4
+  - .po
+  - .plo
