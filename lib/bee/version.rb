@@ -1,3 +1,3 @@
 module Bee
-  VERSION = "0.1.0"
+  VERSION = "0.13.0"
 end
