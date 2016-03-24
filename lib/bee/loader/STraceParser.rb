@@ -20,7 +20,7 @@ module Bee
       if (line =~ /([0-9]+)/)
         create_task_if_needed_pid($1)
       else
-        fatalAndRaise("Unable top parse input line [#{line}]")
+        fatalAndRaise("Unable to parse input line [#{line}]")
       end
     end
 
