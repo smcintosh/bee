@@ -12,9 +12,12 @@ module Bee
 
     def node(name, cmd)
       if (!isJunk(name))
+        name=rootify(name,@config.get(:build_home))
         @logger.debug("Updating #{name} with command #{cmd}")
         node = @writer.getNode(:name, name)
-        @writer.addProperty(node, :command, cmd)
+        unless node.nil?
+          @writer.addProperty(node, :command, cmd)
+        end
       end
     end
 
@@ -33,8 +36,9 @@ module Bee
 
         node(name, cmd)
       end
-      @logger.info("= Removing crap from database")
-      remove_implicit
+      #      BUG: removes edge even if node has non-implicit edge as well
+      #      @logger.info("= Removing crap from database")
+      #      remove_implicit
       @logger.info("DONE")
       @logger.info("=== FINISHED GDFXMLLoader ===")
     end

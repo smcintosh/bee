@@ -89,7 +89,7 @@ module Bee
         myNode = @writer.addNode(task.taskid) do |n|
           @writer.addProperty(n, "nid", task.taskid)
           @writer.addProperty(n, "command", task.command)
-          @writer.addProperty(n, "dir", task.currentDir)
+          @writer.addProperty(n, "dir", rootify(task.currentDir,@config.get(:build_home)))
           @writer.addLabel(n, :process)
           @writer.addLabel(n, :strace)
         end
@@ -122,6 +122,12 @@ module Bee
       if (!file.filename.start_with?("/"))
         fname = "<root>/#{file.filename}"
         internal = 1
+      else
+        #for MAKAO nodes
+        fname=rootify(fname,@config.get(:build_home))
+        if (fname.start_with?("<root>"))
+          internal = 1
+        end
       end
 
       # N;file;<root>/src/.deps/xo-print.Po;<root>/src/.deps/xo-print.Po;in
@@ -216,7 +222,7 @@ module Bee
           end
           @filequeue[item.taskid] = [] if (!@filequeue[item.taskid])
           @filequeue[item.taskid] << item
-          @logger.info("Queueing file: " + item.filename + " for taskid: " + item.taskid.to_s)
+          @logger.info("Queueing file: " + rootify(item.filename,@config.get(:build_home)) + " for taskid: " + item.taskid.to_s)
 
         else
           fatalAndRaise("Unrecognized strace item type #{item.type}")

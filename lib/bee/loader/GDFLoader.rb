@@ -41,28 +41,34 @@ module Bee
             val = val.map(&:to_f).inject(0.0, :+)
           end
         end
+      when :localname,:makefile,:dir,:base
+        val=rootify(val,@config.get(:build_home))
       end
 
       return val
     end
 
     def node(row_spl)
+
+      # check if node is in use
+      is_inuse = row_spl[1].eql?("1")
+      
       # Skip uninteresting nodes
-      return if (isJunk(row_spl[0]))
+      return if (isJunk(row_spl[0]) or !is_inuse)
 
       @logger.info("Adding node #{row_spl[0]}")
       @writer.addNode(row_spl[0]) do |n|
         row_spl.size.times do |i|
           @writer.addProperty(n, @types[i].intern, process_value(@types[i], row_spl[i]))
-          @writer.addLabel(n, :gdf)
         end
 
-        # implicit node check
-        @writer.addProperty(n, :implicit, true)
+        @writer.addLabel(n, :gdf)
 
+        # implicit node check: redundant, so commented out
+        #@writer.addProperty(n, :implicit, true)
+     
         # Add full filename
-        @writer.addProperty(n, :nid,
-                            "#{@writer.getProperty(n, :dir)}/#{@writer.getProperty(n, :base)}")
+        @writer.addProperty(n, :nid, "#{@writer.getProperty(n, :dir)}/#{@writer.getProperty(n, :base)}")
 
         # Check if it is an internal path
         @writer.addProperty(n, :internal,
@@ -71,24 +77,28 @@ module Bee
     end
 
     def edge(row_spl)
-      # Skip uninteresting nodes
-      return if (isJunk(row_spl[0]) or isJunk(row_spl[1]))
 
       # check if edge is implicit
       is_implicit = row_spl[6].eql?("1")
+
+      # Skip uninteresting nodes
+      return if (isJunk(row_spl[0]) or isJunk(row_spl[1]) or is_implicit)
 
       # Find the nodes by name
       from = @writer.getNode(:name, row_spl[0])
       to = @writer.getNode(:name, row_spl[1])
 
-      from_nid = @writer.getProperty(from, :nid)
-      to_nid = @writer.getProperty(to, :nid)
+      # Skip edges between nodes that were not in use
+      return if (from.nil? or to.nil?)
+      
+#      from_nid = @writer.getProperty(from, :nid)
+#      to_nid = @writer.getProperty(to, :nid)
 
       # Get edge type
-      if (from_nid.start_with?("<root>") and to_nid.start_with?("<root>"))
+      if (@writer.getProperty(from, :internal) and @writer.getProperty(to, :internal))
         edge_type = :depends
       else
-        return # skip external deps for now
+        #return # skip external deps for now
         edge_type = :external_depends
       end
 
@@ -98,12 +108,12 @@ module Bee
            @writer.addProperty(e, @types[i].intern, row_spl[i])
          end
       end
-      # not_implicit label from nodes if the edge is not implicit
-      if (!is_implicit)
-        @logger.info("setting implicit property for #{row_spl[0]} and #{row_spl[1]}")
-        @writer.addProperty(from, :implicit, false)
-        @writer.addProperty(to, :implicit, false)
-      end
+      # not_implicit label from nodes if the edge is not implicit: redundant, we remove all implicit edges by default
+#      if (!is_implicit)
+#        @logger.info("setting implicit property for #{row_spl[0]} and #{row_spl[1]}")
+#        @writer.addProperty(from, :implicit, false)
+#        @writer.addProperty(to, :implicit, false)
+#      end
     end
 
     def handle_row(row)
@@ -142,7 +152,15 @@ module Bee
         row.strip!
         handle_row(row)
       end
+
+      @logger.info("== Removing orphans nodes from database")
+      remove_orphans
+      
       @logger.info("=== FINISHED GDFLoader ===")
+    end
+  
+    def remove_orphans
+      Neo4j::Session.query("MATCH (n:gdf) WHERE not( (n)-[]-() ) DELETE n")
     end
   end
 end
