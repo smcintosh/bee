@@ -68,13 +68,13 @@ module Bee
         fatalAndRaise("Rename has unexpected number of parameters #{pline.data}")
       end
 
-      @files.push(STraceFile.new(thisTask, pline.parms[0],'rename-in', @currLine,[], @executionPath))
-      @files.push(STraceFile.new(thisTask, pline.parms[1],'rename-out',@currLine,[], @executionPath))
+      @files.push(STraceFile.new(thisTask, pline.parms[0],'rename-in', @currLine,[], @executionPath, @logger))
+      @files.push(STraceFile.new(thisTask, pline.parms[1],'rename-out',@currLine,[], @executionPath, @logger))
     end
 
     def process_file(pline, op, mode)
       thisTask = @currentTasks[pline.pid];
-      @files.push(STraceFile.new(thisTask, pline.parms[0], op, @currLine, mode, @executionPath))
+      @files.push(STraceFile.new(thisTask, pline.parms[0], op, @currLine, mode, @executionPath, @logger))
     end
 
     def process_line(pline)

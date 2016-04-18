@@ -101,7 +101,7 @@ module Bee
 
     include LogUtils
 
-    def initialize(task, filename, op, timeStamp, mode, defaultDir)
+    def initialize(task, filename, op, timeStamp, mode, defaultDir, logger)
 
       filename.sub!(/^"/,'')
       filename.sub!(/"$/,'')
@@ -114,6 +114,7 @@ module Bee
       @timeStamp = timeStamp;
       @mode = mode
       @filename = fixFilename(filename)
+      @logger = logger
     end
 
     def cleanDir(dir)
