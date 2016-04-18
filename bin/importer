@@ -1,4 +1,7 @@
-#!/usr/bin/env jruby
+#!/usr/bin/env jruby -J-Xmx12G
+
+# Configure the above line to make use of the memory that you have available
+# on your machine
 
 require 'bee'
 require 'fileutils'
