@@ -99,6 +99,8 @@ module Bee
     attr_accessor :timeStamp
     attr_accessor :originalName
 
+    include LogUtils
+
     def initialize(task, filename, op, timeStamp, mode, defaultDir)
 
       filename.sub!(/^"/,'')
