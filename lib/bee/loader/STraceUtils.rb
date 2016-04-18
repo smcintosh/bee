@@ -113,8 +113,8 @@ module Bee
       @op = op
       @timeStamp = timeStamp;
       @mode = mode
-      @filename = fixFilename(filename)
       @logger = logger
+      @filename = fixFilename(filename)
     end
 
     def cleanDir(dir)
