@@ -106,14 +106,20 @@ module Bee
       filename.sub!(/^"/,'')
       filename.sub!(/"$/,'')
 
+      @logger = logger
       @originalName = filename
       @taskid = task.taskid
       @defaultDir = defaultDir
-      @currentDir = task.currentDir
       @op = op
       @timeStamp = timeStamp;
       @mode = mode
-      @logger = logger
+      @currentDir = task.currentDir
+
+      # Assume current dir is project home if no current dir is provided
+      if (!@currentDir or @currentDir.empty?)
+        @currentDir = defaultDir
+      end
+      
       @filename = fixFilename(filename)
     end
 
@@ -131,7 +137,7 @@ module Bee
         # this function does not work with relative directories, period
         # because expand_path will use the current directory in the local computer to do it
         unless f =~ /^\//
-          fatalAndRaise("directory of File should be absolute file [#{f}] currentDir [#{@currentDir}]")
+          fatalAndRaise("directory of File should be absolute file [#{f}] currentDir [#{@currentDir}] defaultDir [#{@defaultDir}]")
         end
       end
 
